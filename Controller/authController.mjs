@@ -13,7 +13,6 @@ import Vendor from '../Model/vendorModel.mjs'
 let fullName
 let userName
 let email
-let links
 let phone
 let password
 let passwordConfirm
@@ -159,7 +158,7 @@ export const verifyOTP = catchAsync(async(req, res, next) => {
 //     createSendToken(newVendor, 201, res);
 // });
 
-export const vendorOTP = catchAsync(async (req, res, next) => {
+export const vendorOTP = catchAsync(async (req, res) => {
 
     fullName = req.body.fullName,
     userName = req.body.userName,
@@ -199,7 +198,7 @@ export const vendorOTP = catchAsync(async (req, res, next) => {
   }
 })
 
-export const verifyVendorOTP = catchAsync(async(req, res, next) => {
+export const verifyVendorOTP = catchAsync(async(req, res) => {
     if(req.body.otp==otp){
         const newVendor = await Vendor.create({
             fullName: fullName,
@@ -212,7 +211,6 @@ export const verifyVendorOTP = catchAsync(async(req, res, next) => {
         });
     
         createSendToken(newVendor, 201, res);
-        next();
     }
     else{
         res.status(401).json({

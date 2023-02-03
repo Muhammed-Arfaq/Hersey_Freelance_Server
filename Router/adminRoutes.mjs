@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { approveVendor, blockUser, blockVendor, getAllUsers, getAllVendors, unBlockUser } from '../Controller/adminController.mjs'
+import { approveVendor, blockUser, blockVendor, getAllUsers, getAllVendors, getVendorDetails, unBlockUser } from '../Controller/adminController.mjs'
 import { adminLogin }  from '../Controller/authController.mjs'
 
 const router = express.Router()
@@ -35,5 +35,9 @@ router
 router
     .route('/blockVendor/:id')
     .post(blockVendor)
+
+router
+    .route('/vendorDetails/:id')
+    .get(getVendorDetails)
 
 export default router

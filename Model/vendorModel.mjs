@@ -19,19 +19,37 @@ const vendorSchema = new mongoose.Schema({
         lowercase: true,
         validate: [validator.isEmail,  'please enter a valid email']
     },
-    links: {
-        proof1: {
+    skill: {
+        type: String
+    },
+    googleDrive: {
+        type: String,
+    },
+    linkedIn: {
+        type: String
+    },
+    github: {
+        type: String
+    },
+    address: [{
+        pincode: {
+            type: Number,
+        },
+        country: {
             type: String,
         },
-        proof2: {
-            type: String
+        currentAddress: {
+            type: String,
         },
-        proof3: {
-            type: String
+        city: {
+            type: String,
         },
-        proof4: {
-            type: String
-        },
+        state: {
+            type: String,
+        }
+    }],
+    about: {
+        type: String
     },
     phone: {
         type: Number,
