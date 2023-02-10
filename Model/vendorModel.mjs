@@ -51,6 +51,12 @@ const vendorSchema = new mongoose.Schema({
     about: {
         type: String
     },
+    profilePhoto: {
+        type: String
+    },
+    gender: {
+        type: String,
+    },
     phone: {
         type: Number,
         required: true
@@ -78,6 +84,16 @@ const vendorSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now()
+    },
+    rating: {
+        type: Number,
+        Default: 0
+    },
+    review: {
+        type: String
+    },
+    payment: {
+        type: String
     },
     passwordChangedAt: Date,
     passwordResetToken: String,

@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { login, OTP, verifyOTP }  from '../Controller/authController.mjs'
-import { getAllVendor, getVendorDetail } from '../Controller/userController.mjs'
+import { getAllGigs, getAllVendor, getVendorDetail, products, services } from '../Controller/userController.mjs'
 
 const router = express.Router()
 
@@ -23,6 +23,18 @@ router
 router
     .route('/vendorDetails/:id')
     .get(getVendorDetail)
+
+router
+    .route('/allGigs')
+    .get(getAllGigs)
+
+router
+    .route('/services')
+    .get(services)
+
+router
+    .route('/products')
+    .get(products)
 
 
 export default router

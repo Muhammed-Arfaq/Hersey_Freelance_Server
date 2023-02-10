@@ -6,6 +6,9 @@ import mongoose from 'mongoose'
 import User from '../Model/userModel.mjs'
 import Admin from '../Model/adminModel.mjs'
 import Vendor from '../Model/vendorModel.mjs'
+import Gig from '../Model/gigModel.mjs'
+import Category from '../Model/categoryModel.mjs'
+import Book from '../Model/bookingModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
@@ -63,47 +66,47 @@ const createSendToken = (user, statusCode, res) => {
         status: 'success',
         token,
         data: {
-          user
+            user
         }
-      });
+    });
 };
 
 export const OTP = catchAsync(async (req, res, next) => {
 
-      fullName = req.body.fullName,
-      userName = req.body.userName,
-      email = req.body.email,
-      phone = req.body.phone,
-      password = req.body.password,
-      passwordConfirm = req.body.passwordConfirm;
+    fullName = req.body.fullName,
+        userName = req.body.userName,
+        email = req.body.email,
+        phone = req.body.phone,
+        password = req.body.password,
+        passwordConfirm = req.body.passwordConfirm;
 
     const user = await User.findOne({ email: email })
 
-    if(!user) {
-        
+    if (!user) {
+
         // send mail with defined transport object
         let mailOptions = {
             to: req.body.email,
             subject: "Otp for registration is: ",
             html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
         };
-    
+
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 return console.log(error);
             }
             console.log('Message sent: %s', info.messageId);
             console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    
+
             res.status(200).json({
                 status: 'success'
-              });
+            });
         });
 
     } else {
         res.status(401).json({
             status: 'failed'
-          });
+        });
     }
 })
 
@@ -113,7 +116,7 @@ export const OTP = catchAsync(async (req, res, next) => {
 //        subject: "Otp for registration is: ",
 //        html: "<h3>OTP for account verification is </h3>"  + "<h1 style='font-weight:bold;'>" + otp +"</h1>" // html body
 //      };
-     
+
 //      transporter.sendMail(mailOptions, (error, info) => {
 //         if (error) {
 //             return console.log(error);
@@ -124,8 +127,8 @@ export const OTP = catchAsync(async (req, res, next) => {
 //     });
 // })
 
-export const verifyOTP = catchAsync(async(req, res, next) => {
-    if(req.body.otp==otp){
+export const verifyOTP = catchAsync(async (req, res, next) => {
+    if (req.body.otp == otp) {
         const newuser = await User.create({
             fullName: fullName,
             userName: userName,
@@ -134,14 +137,14 @@ export const verifyOTP = catchAsync(async(req, res, next) => {
             password: password,
             passwordConfirm: passwordConfirm
         });
-    
+
         createSendToken(newuser, 201, res);
         next()
     }
-    else{
+    else {
         res.status(401).json({
             status: 'failed'
-          });
+        });
     }
 })
 
@@ -154,52 +157,52 @@ export const verifyOTP = catchAsync(async(req, res, next) => {
 //       password: req.body.password,
 //       passwordConfirm: req.body.passwordConfirm
 //     });
-  
+
 //     createSendToken(newVendor, 201, res);
 // });
 
 export const vendorOTP = catchAsync(async (req, res) => {
 
     fullName = req.body.fullName,
-    userName = req.body.userName,
-    email = req.body.email,
-    links = req.body.links,
-    phone = req.body.phone,
-    password = req.body.password,
-    passwordConfirm = req.body.passwordConfirm;
+        userName = req.body.userName,
+        email = req.body.email,
+        links = req.body.links,
+        phone = req.body.phone,
+        password = req.body.password,
+        passwordConfirm = req.body.passwordConfirm;
 
-  const vendor = await Vendor.findOne({ email: email })
+    const vendor = await Vendor.findOne({ email: email })
 
-  if(!vendor) {
-      
-      // send mail with defined transport object
-      let mailOptions = {
-          to: req.body.email,
-          subject: "Otp for registration is: ",
-          html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-      };
-  
-      transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-              return console.log(error);
-          }
-          console.log('Message sent: %s', info.messageId);
-          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  
-          res.status(200).json({
-              status: 'success'
+    if (!vendor) {
+
+        // send mail with defined transport object
+        let mailOptions = {
+            to: req.body.email,
+            subject: "Otp for registration is: ",
+            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return console.log(error);
+            }
+            console.log('Message sent: %s', info.messageId);
+            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+            res.status(200).json({
+                status: 'success'
             });
-      });
-
-  } else {
-      res.status(401).json({
-          status: 'failed'
         });
-  }
+
+    } else {
+        res.status(401).json({
+            status: 'failed'
+        });
+    }
 })
 
-export const verifyVendorOTP = catchAsync(async(req, res) => {
-    if(req.body.otp==otp){
+export const verifyVendorOTP = catchAsync(async (req, res) => {
+    if (req.body.otp == otp) {
         const newVendor = await Vendor.create({
             fullName: fullName,
             userName: userName,
@@ -209,13 +212,13 @@ export const verifyVendorOTP = catchAsync(async(req, res) => {
             password: password,
             passwordConfirm: passwordConfirm
         });
-    
+
         createSendToken(newVendor, 201, res);
     }
-    else{
+    else {
         res.status(401).json({
             status: 'failed'
-          });
+        });
     }
 })
 
@@ -285,3 +288,40 @@ export const vendorLogin = catchAsync(async (req, res, next) => {
     createSendToken(vendor, 201, res);
     next();
 });
+
+export const vendorGig = catchAsync(async (req, res, next) => {
+    const newGig = await Gig.create({
+        title: req.body.title,
+        overview:req.body.overview,
+        image:req.body.image,
+        type:req.body.type,
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+    });
+    res.status(200).json({
+        status: 'success',
+        data: {
+            newGig
+        }
+    });
+})
+
+export const addCategory = catchAsync(async (req, res, next) => {
+    const newCategory = await Category.create({
+        name: req.body.name,
+    });
+    res.status(200).json({
+        status: 'success',
+        data: {
+            newCategory
+        }
+    });
+});
+
+export const bookNow = catchAsync(async(req, res, next) => {
+    const userId = mongoose.Types.ObjectId(req.user._id);
+    const newBooking = await Book.create({
+        userId
+    })
+})

@@ -1,6 +1,6 @@
 import  express  from 'express'
-import { approveVendor, blockUser, blockVendor, getAllUsers, getAllVendors, getVendorDetails, unBlockUser } from '../Controller/adminController.mjs'
-import { adminLogin }  from '../Controller/authController.mjs'
+import { approveVendor, blockUser, blockVendor, deleteCategory, getAllCategory, getAllUsers, getAllVendors, getVendorDetails, unBlockUser } from '../Controller/adminController.mjs'
+import { addCategory, adminLogin }  from '../Controller/authController.mjs'
 
 const router = express.Router()
 
@@ -39,5 +39,17 @@ router
 router
     .route('/vendorDetails/:id')
     .get(getVendorDetails)
+
+router
+    .route('/addCategory')
+    .post(addCategory)
+
+router
+    .route('/deleteCategory/:id')
+    .post(deleteCategory)
+
+router
+    .route('/categories')
+    .get(getAllCategory)
 
 export default router

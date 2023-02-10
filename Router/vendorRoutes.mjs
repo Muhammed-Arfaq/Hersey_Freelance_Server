@@ -1,6 +1,6 @@
 import  express  from 'express'
-import { vendorLogin, vendorOTP, verifyVendorOTP }  from '../Controller/authController.mjs'
-import { updateVendorAddress, updateVendorSkills } from '../Controller/vendorController.mjs'
+import { vendorGig, vendorLogin, vendorOTP, verifyVendorOTP }  from '../Controller/authController.mjs'
+import { showAllGigs, updateVendorAddress, updateVendorSkills } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
 
@@ -18,10 +18,18 @@ router
 
 router  
     .route('/addAddress/:id')
-    .post(updateVendorAddress)
+    .patch(updateVendorAddress)
 
 router
     .route('/addSkill/:id')
-    .post(updateVendorSkills)
+    .patch(updateVendorSkills)
+
+router
+    .route('/newGig')
+    .post(vendorGig)
+
+router
+    .route('/showGigs')
+    .get(showAllGigs)
 
 export default router
