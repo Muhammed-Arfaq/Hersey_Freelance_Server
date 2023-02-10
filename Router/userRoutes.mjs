@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { login, OTP, verifyOTP }  from '../Controller/authController.mjs'
+import { login, OTP, userProtect, verifyOTP }  from '../Controller/authController.mjs'
 import { getAllGigs, getAllVendor, getVendorDetail, products, services } from '../Controller/userController.mjs'
 
 const router = express.Router()
@@ -35,6 +35,10 @@ router
 router
     .route('/products')
     .get(products)
+
+router
+    .route('/protect')
+    .post(userProtect)
 
 
 export default router

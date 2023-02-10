@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { promisify } from 'util'
 import catchAsync from '../utils/catchAsync.mjs'
 import AppError from '../utils/appError.mjs'
 import nodemailer from 'nodemailer'
@@ -48,16 +49,16 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
-    const cookieOPtions = {
-        expires: new Date(
-            Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-        ),
-        httpOnly: true,
-    };
-    if (process.env.NODE_ENV === "production") {
-        cookieOPtions.secure = true;
-    }
-    res.cookie("jwt", token, cookieOPtions);
+    // const cookieOPtions = {
+    //     expires: new Date(
+    //         Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    //     ),
+    //     httpOnly: true,
+    // };
+    // if (process.env.NODE_ENV === "production") {
+    //     cookieOPtions.secure = true;
+    // }
+    // res.cookie("jwt", token, cookieOPtions);
 
     //remove the password from the output
     user.password = undefined;
@@ -325,3 +326,35 @@ export const bookNow = catchAsync(async(req, res, next) => {
         userId
     })
 })
+
+export const userProtect = catchAsync(async (req, res, next) => {
+    let token;
+    token = req.body.token;
+    console.log(token);
+    if (!token) {
+            res.json({
+                user: false
+            })
+    }
+
+    // 2) Verification token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3) Check if user still exists
+    console.log(decoded)
+    const currentUser = await User.findOne({_id:decoded.id});
+    console.log(currentUser)
+    if (!currentUser) {
+        return next(
+            new AppError(
+                res.json({
+                    user: false
+                })
+            )
+        );
+    }
+
+    const userId = currentUser._id
+    console.log(userId);
+    res.json({ user: true, currentUser, userId })
+});
