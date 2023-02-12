@@ -291,10 +291,11 @@ export const vendorLogin = catchAsync(async (req, res, next) => {
 });
 
 export const vendorGig = catchAsync(async (req, res, next) => {
+    console.log(req.body);
     const newGig = await Gig.create({
         title: req.body.title,
         overview:req.body.overview,
-        image:req.body.image,
+        image:req.body.gigImage,
         type:req.body.type,
         description: req.body.description,
         price: req.body.price,
@@ -343,6 +344,39 @@ export const userProtect = catchAsync(async (req, res, next) => {
     // 3) Check if user still exists
     console.log(decoded)
     const currentUser = await User.findOne({_id:decoded.id});
+    console.log(currentUser)
+    if (!currentUser) {
+        return next(
+            new AppError(
+                res.json({
+                    user: false
+                })
+            )
+        );
+    }
+
+    const userId = currentUser._id
+    console.log(userId);
+    res.json({ user: true, currentUser, userId })
+});
+
+
+export const adminProtect = catchAsync(async (req, res, next) => {
+    let token;
+    token = req.body.token;
+    console.log(token);
+    if (!token) {
+            res.json({
+                user: false
+            })
+    }
+
+    // 2) Verification token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3) Check if user still exists
+    console.log(decoded)
+    const currentUser = await Admin.findOne({_id:decoded.id});
     console.log(currentUser)
     if (!currentUser) {
         return next(

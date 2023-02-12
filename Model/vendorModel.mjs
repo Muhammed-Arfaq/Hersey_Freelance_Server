@@ -31,7 +31,7 @@ const vendorSchema = new mongoose.Schema({
     github: {
         type: String
     },
-    address: [{
+    address: {
         pincode: {
             type: Number,
         },
@@ -47,7 +47,7 @@ const vendorSchema = new mongoose.Schema({
         state: {
             type: String,
         }
-    }],
+    },
     about: {
         type: String
     },

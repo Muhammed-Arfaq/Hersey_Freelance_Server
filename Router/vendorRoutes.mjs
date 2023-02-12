@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { vendorGig, vendorLogin, vendorOTP, verifyVendorOTP }  from '../Controller/authController.mjs'
-import { showAllGigs, updateVendorAddress, updateVendorSkills } from '../Controller/vendorController.mjs'
+import { showAllCategory, showAllGigs, updateVendorAddress, updateVendorSkills } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
 
@@ -31,5 +31,9 @@ router
 router
     .route('/showGigs')
     .get(showAllGigs)
+
+router
+    .route('/categories')
+    .get(showAllCategory)
 
 export default router

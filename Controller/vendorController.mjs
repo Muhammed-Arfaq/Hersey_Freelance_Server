@@ -1,3 +1,4 @@
+import Category from "../Model/categoryModel.mjs";
 import Gig from "../Model/gigModel.mjs";
 import Vendor from "../Model/vendorModel.mjs"
 import catchAsync from "../utils/catchAsync.mjs"
@@ -45,3 +46,13 @@ export const showAllGigs = catchAsync(async(req, res, next) => {
       }
     })
   })
+
+  export const showAllCategory = catchAsync( async(req, res, next) => {
+    const categories = await Category.find()
+    res.status(200).json({
+        status: 'success',
+        data: {
+            categories
+        }
+    })
+})
