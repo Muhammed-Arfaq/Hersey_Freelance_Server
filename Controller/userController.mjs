@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
+import Booking from "../Model/bookingModel.mjs";
 import Gig from "../Model/gigModel.mjs";
+import Review from "../Model/reviewModel.mjs";
 import User from "../Model/userModel.mjs";
 import Vendor from "../Model/vendorModel.mjs"
 import catchAsync from "../utils/catchAsync.mjs"
@@ -72,6 +75,29 @@ export const userProfile = catchAsync(async(req, res, next) => {
     status: "success",
     data: {
       profile
+    }
+  })
+})
+
+export const gigRating = catchAsync(async(req, res, next) => {
+  const gigId = req.params.gigId
+  console.log(gigId);
+  const review = await Review.find({ gigId: gigId }).populate("gigId").populate("userId")
+  res.status(200).json({
+    status: "success",
+    data: {
+      review
+    }
+  })
+})
+
+export const reservedGigs = catchAsync(async(req, res, next) => {
+  const userId = req.user._id
+  const reserved = await Booking.find({ userId }).populate("gigId")
+  res.status(200).json({
+    status: "success",
+    data: {
+      reserved
     }
   })
 })

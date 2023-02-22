@@ -1,6 +1,6 @@
 import  express  from 'express'
-import { chat, getConnectionsUser, getMessage, login, OTP, userProtect, verifyOTP }  from '../Controller/authController.mjs'
-import { getAllGigs, getAllVendor, getVendorDetail, products, services, singleGig, userProfile } from '../Controller/userController.mjs'
+import { bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
+import { getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, userProfile } from '../Controller/userController.mjs'
 
 const router = express.Router()
 
@@ -55,5 +55,21 @@ router
 router
     .route('/userProfile')
     .get(userProtect, userProfile)
+
+router
+    .route('/reserveNow')
+    .post(userProtect, bookNow)
+
+router
+    .route("/addReview")
+    .post(userProtect, reviewVendor)
+
+router
+    .route("/gigRating/:gigId")
+    .get(userProtect, gigRating)
+
+router
+    .route("/reservedGigs")
+    .get(userProtect, reservedGigs)
 
 export default router

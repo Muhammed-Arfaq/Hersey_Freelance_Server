@@ -6,25 +6,26 @@ const bookingSchema = new mongoose.Schema({
         type: Objectid,
         ref: 'User'
     },
-    Description: {
+    title: {
         type: String
     },
-    gig: [{
-        gigId: {
-            type: Objectid,
-            ref: 'Gig'
-        },
-        status: {
-            type: String,
-            default: 'Reserved'
-        }, 
-    }],
+    Requirements: {
+        type: String
+    },
+    gigId: {
+        type: Objectid,
+        ref: 'Gig'
+    },
+    status: {
+        type: String,
+        default: 'Reserved'
+    },
     date: {
         type: Date,
         default: Date.now()
     }
 })
 
-const Book = mongoose.model('Book', bookingSchema)
+const Booking = mongoose.model('Booking', bookingSchema)
 
-export default Book
+export default Booking

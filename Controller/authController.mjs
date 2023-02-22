@@ -9,8 +9,9 @@ import Admin from '../Model/adminModel.mjs'
 import Vendor from '../Model/vendorModel.mjs'
 import Gig from '../Model/gigModel.mjs'
 import Category from '../Model/categoryModel.mjs'
-import Book from '../Model/bookingModel.mjs'
+import Booking from '../Model/bookingModel.mjs'
 import Message from '../Model/messageModel.mjs'
+import Review from '../Model/reviewModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
@@ -310,7 +311,6 @@ export const vendorGig = catchAsync(async (req, res, next) => {
 })
 
 export const addCategory = catchAsync(async (req, res, next) => {
-    console.log(req.body);
     const newCategory = await Category.create({
         name: req.body.name,
     });
@@ -323,9 +323,37 @@ export const addCategory = catchAsync(async (req, res, next) => {
 });
 
 export const bookNow = catchAsync(async (req, res, next) => {
-    const userId = mongoose.Types.ObjectId(req.user._id);
-    const newBooking = await Book.create({
-        userId
+    const userId = req.user._id
+    const data = req.body
+    const newBooking = await Booking.create({
+        userId,
+        title: data.gig.title,
+        Requirements: data.Requirements,
+        gigId: data.gig._id
+    })
+    res.status(200).json({
+        status: 'success',
+        data: {
+            newBooking
+        }
+    });
+})
+
+export const reviewVendor = catchAsync(async(req, res, next) => {
+    const userId = req.user._id
+    const data = req.body
+    console.log(data);
+    const newReview = await Review.create({
+        userId,
+        gigId: data.reviewData.gig,
+        rating: data.reviewData.rating,
+        title: data.reviewData.title,
+        description: data.reviewData.description
+    })
+    res.status(200).json({
+        data: {
+            newReview
+        }
     })
 })
 
