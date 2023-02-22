@@ -14,14 +14,14 @@ export const getAllUsers = catchAsync(async( req, res, next ) => {
 })
 
 export const blockUser = catchAsync(async(req, res, next ) => {
-    await User.findOneAndUpdate({ _id: req.params.id }, { $set: { status: "Blocked" } })
+    await User.findOneAndUpdate({ _id: req.body.id }, { $set: { status: "Blocked" } })
     res.status(200).json({
         status: 'success'
     })
 })
 
 export const unBlockUser = catchAsync(async(req, res, next ) => {
-    await User.findOneAndUpdate({ _id: req.params.id }, { $set: { status: "Active" } })
+    await User.findOneAndUpdate({ _id: req.body.id }, { $set: { status: "Active" } })
     res.status(200).json({
         status: 'success'
     })
@@ -38,21 +38,21 @@ export const getAllVendors = catchAsync(async(req, res, next ) => {
 })
 
 export const approveVendor = catchAsync(async(req, res, next ) => {
-    await Vendor.findOneAndUpdate({ _id: req.params.id }, { $set: { status: "Approved" } })
+    await Vendor.findOneAndUpdate({ _id: req.body.id }, { $set: { status: "Approved" } })
     res.status(200).json({
         status: "success"
     })
 })
 
 export const blockVendor = catchAsync(async(req, res, next ) => {
-    await Vendor.findOneAndUpdate({ _id:req.params.id }, { $set: { status: "Blocked" } })
+    await Vendor.findOneAndUpdate({ _id:req.body.id }, { $set: { status: "Blocked" } })
     res.status(200).json({
         status: "success"
     })
 })
 
 export const getVendorDetails = catchAsync(async(req, res, next ) => {
-    const vendorDetails = await Vendor.findOne({ _id: req.params.id })
+    const vendorDetails = await Vendor.findOne({ _id: req.body.id })
     res.status(200).json({
         status: 'success',
         data: {
@@ -72,7 +72,7 @@ export const getAllCategory = catchAsync( async(req, res, next) => {
 })
 
 export const deleteCategory = catchAsync(async(req, res, next ) => {
-    await Category.findByIdAndDelete({ _id: req.params.id })
+    await Category.findByIdAndDelete({ _id: req.body.id })
     res.status(200).json({
         status: 'success',
       });

@@ -6,38 +6,38 @@ import bcrypt from 'bcryptjs'
 const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        required: true
     },
     userName: {
         type: String,
-        required: true
     },
     email: {
         type: String,
-        required: [true, 'enter your email id'],
         unique: true,
         lowercase: true,
         validate: [validator.isEmail,  'please enter a valid email']
     },
+    gender : {
+        type: String
+    },
+    location: {
+        type: String
+    },
     phone: {
         type: Number,
-        required: true
     },
     profilePhoto: {
         type: String
     },
-    gender: {
+    dob: {
         type: String,
     },
     password: {
         type: String,
-        required: [true, 'provide a password'],
         minlength: 8,
         select: false
     },
     passwordConfirm: {
         type: String,
-        required: [true, 'confirm your password'],
         validate: {
             validator: function(el) {
                 return el === this.password 

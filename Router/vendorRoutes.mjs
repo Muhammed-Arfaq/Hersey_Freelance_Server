@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { vendorGig, vendorLogin, vendorOTP, verifyVendorOTP }  from '../Controller/authController.mjs'
+import { getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
 import { showAllCategory, showAllGigs, updateVendorAddress, updateVendorSkills } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
@@ -18,22 +18,26 @@ router
 
 router  
     .route('/addAddress/:id')
-    .patch(updateVendorAddress)
+    .patch(vendorProtect, updateVendorAddress)
 
 router
     .route('/addSkill/:id')
-    .patch(updateVendorSkills)
+    .patch(vendorProtect, updateVendorSkills)
 
 router
     .route('/newGig')
-    .post(vendorGig)
+    .post(vendorProtect, vendorGig)
 
 router
     .route('/showGigs')
-    .get(showAllGigs)
+    .get(vendorProtect, showAllGigs)
 
 router
     .route('/categories')
-    .get(showAllCategory)
+    .get(vendorProtect, showAllCategory)
+
+router
+    .route('/getConnections/:vendorId')
+    .get(vendorProtect, getConnections)
 
 export default router

@@ -3,7 +3,6 @@ import cors from 'cors'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
-import multer from 'multer'
 
 import userRouter from './Router/userRoutes.mjs'
 import vendorRouter from './Router/vendorRoutes.mjs'

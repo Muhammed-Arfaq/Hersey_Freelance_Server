@@ -14,6 +14,10 @@ const gigSchema = new mongoose.Schema({
     price: {
         type: Number,
     },
+    vendorId: {
+        type: Objectid,
+        ref: "Vendor"
+    },
     category: {
         type: Objectid,
         ref: "Category"

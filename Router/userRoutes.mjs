@@ -1,6 +1,6 @@
 import  express  from 'express'
-import { login, OTP, userProtect, verifyOTP }  from '../Controller/authController.mjs'
-import { getAllGigs, getAllVendor, getVendorDetail, products, services } from '../Controller/userController.mjs'
+import { chat, getConnectionsUser, getMessage, login, OTP, userProtect, verifyOTP }  from '../Controller/authController.mjs'
+import { getAllGigs, getAllVendor, getVendorDetail, products, services, singleGig, userProfile } from '../Controller/userController.mjs'
 
 const router = express.Router()
 
@@ -22,11 +22,15 @@ router
 
 router
     .route('/vendorDetails/:id')
-    .get(getVendorDetail)
+    .get(userProtect, getVendorDetail)
 
 router
     .route('/allGigs')
     .get(getAllGigs)
+
+router
+    .route('/singleGig/:id')
+    .get(userProtect, singleGig)
 
 router
     .route('/services')
@@ -37,8 +41,19 @@ router
     .get(products)
 
 router
-    .route('/protect')
-    .post(userProtect)
+    .route('/chat')
+    .post( chat)
 
+router
+    .route('/getMessage/:user1Id/:user2Id')
+    .get(getMessage)
+
+router
+    .route('/getUserConnections/:userId')
+    .get(userProtect, getConnectionsUser)
+
+router
+    .route('/userProfile')
+    .get(userProtect, userProfile)
 
 export default router

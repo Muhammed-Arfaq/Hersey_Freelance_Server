@@ -1,4 +1,5 @@
 import Gig from "../Model/gigModel.mjs";
+import User from "../Model/userModel.mjs";
 import Vendor from "../Model/vendorModel.mjs"
 import catchAsync from "../utils/catchAsync.mjs"
 
@@ -32,6 +33,17 @@ export const getAllGigs = catchAsync(async(req, res, next) => {
   })
 })
 
+export const singleGig = catchAsync(async(req, res, next) => {
+  const gigId = req.params.id
+  const singleGig = await Gig.findOne({ _id: gigId }).populate('vendorId')
+  res.status(200).json({
+    status: "success",
+    data: {
+      singleGig
+    }
+  })
+})
+
 export const services = catchAsync(async(req, res, next) => {
   const services = await Gig.find({ type: "Service" })
   res.status(200).json({
@@ -48,6 +60,18 @@ export const products = catchAsync(async(req, res, next) => {
     status: "success",
     data: {
       products
+    }
+  })
+})
+
+export const userProfile = catchAsync(async(req, res, next) => {
+  const user = req.user
+  console.log(user);
+  const profile = await User.findOne({ _id: user._id })
+  res.status(200).json({
+    status: "success",
+    data: {
+      profile
     }
   })
 })

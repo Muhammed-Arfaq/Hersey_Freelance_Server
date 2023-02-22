@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { approveVendor, blockUser, blockVendor, deleteCategory, getAllCategory, getAllUsers, getAllVendors, getVendorDetails, unBlockUser } from '../Controller/adminController.mjs'
-import { addCategory, adminLogin }  from '../Controller/authController.mjs'
+import { addCategory, adminLogin, adminProtect }  from '../Controller/authController.mjs'
 
 const router = express.Router()
 
@@ -14,42 +14,42 @@ router
 
 router
     .route('/userManagement')
-    .get(getAllUsers)
+    .get(adminProtect, getAllUsers)
 
 router
-    .route('/blockUser/:id')
-    .post(blockUser)
+    .route('/blockUser')
+    .post(adminProtect, blockUser)
 
 router
-    .route('/unBlockUser/:id')
-    .post(unBlockUser)
+    .route('/unBlockUser')
+    .post(adminProtect, unBlockUser)
 
 router
     .route('/vendorManagement')
-    .get(getAllVendors)
+    .get(adminProtect, getAllVendors)
 
 router
-    .route('/approveVendor/:id')
-    .post(approveVendor)
+    .route('/approveVendor')
+    .post(adminProtect, approveVendor)
 
 router
-    .route('/blockVendor/:id')
-    .post(blockVendor)
+    .route('/blockVendor')
+    .post(adminProtect, blockVendor)
 
 router
-    .route('/vendorDetails/:id')
-    .get(getVendorDetails)
+    .route('/vendorDetails')
+    .get(adminProtect, getVendorDetails)
 
 router
     .route('/addCategory')
-    .post(addCategory)
+    .post(adminProtect, addCategory)
 
 router
-    .route('/deleteCategory/:id')
-    .post(deleteCategory)
+    .route('/deleteCategory')
+    .post(adminProtect, deleteCategory)
 
 router
     .route('/categories')
-    .get(getAllCategory)
+    .get(adminProtect, getAllCategory)
 
 export default router

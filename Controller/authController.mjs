@@ -10,6 +10,7 @@ import Vendor from '../Model/vendorModel.mjs'
 import Gig from '../Model/gigModel.mjs'
 import Category from '../Model/categoryModel.mjs'
 import Book from '../Model/bookingModel.mjs'
+import Message from '../Model/messageModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
@@ -165,12 +166,11 @@ export const verifyOTP = catchAsync(async (req, res, next) => {
 export const vendorOTP = catchAsync(async (req, res) => {
 
     fullName = req.body.fullName,
-        userName = req.body.userName,
-        email = req.body.email,
-        links = req.body.links,
-        phone = req.body.phone,
-        password = req.body.password,
-        passwordConfirm = req.body.passwordConfirm;
+    userName = req.body.userName,
+    email = req.body.email,
+    phone = req.body.phone,
+    password = req.body.password,
+    passwordConfirm = req.body.passwordConfirm;
 
     const vendor = await Vendor.findOne({ email: email })
 
@@ -208,7 +208,6 @@ export const verifyVendorOTP = catchAsync(async (req, res) => {
             fullName: fullName,
             userName: userName,
             email: email,
-            links: links,
             phone: phone,
             password: password,
             passwordConfirm: passwordConfirm
@@ -294,12 +293,13 @@ export const vendorGig = catchAsync(async (req, res, next) => {
     console.log(req.body);
     const newGig = await Gig.create({
         title: req.body.title,
-        overview:req.body.overview,
-        image:req.body.gigImage,
-        type:req.body.type,
+        overview: req.body.overview,
+        image: req.body.gigImage,
+        type: req.body.type,
         description: req.body.description,
         price: req.body.price,
         category: req.body.category,
+        vendorId: req.body.vendorId
     });
     res.status(200).json({
         status: 'success',
@@ -310,6 +310,7 @@ export const vendorGig = catchAsync(async (req, res, next) => {
 })
 
 export const addCategory = catchAsync(async (req, res, next) => {
+    console.log(req.body);
     const newCategory = await Category.create({
         name: req.body.name,
     });
@@ -321,21 +322,97 @@ export const addCategory = catchAsync(async (req, res, next) => {
     });
 });
 
-export const bookNow = catchAsync(async(req, res, next) => {
+export const bookNow = catchAsync(async (req, res, next) => {
     const userId = mongoose.Types.ObjectId(req.user._id);
     const newBooking = await Book.create({
         userId
     })
 })
 
+export const chat = catchAsync(async (req, res, next) => {
+    console.log(req.body);
+    const { from, to, message } = req.body
+    const newMessage = await Message.create({
+        message: message,
+        chatUsers: [ from, to ],
+        sender: from
+    })
+    res.status(200).json({
+        data: {
+            newMessage
+        }
+    })
+})
+
+export const getConnections = catchAsync(async (req, res, next) => {
+    const vendorId = req.params.vendorId
+    const connections = await Message.find({ chatUsers: vendorId })
+    const connection = [];
+    console.log(connections, ',,,,,,,,,iiiiiiioooooooooooppppppppp');
+    connections.map((message) => {
+        const chatUsers = message.chatUsers
+        console.log(chatUsers);
+        const otherUsers = Object.values(chatUsers).filter((id) => id.toString() !== vendorId.toString());
+        connection.push(...otherUsers);
+    });
+
+    const uniqueConnections = [...new Set(connection)];
+
+    const users = await User.find({ _id: { $in: uniqueConnections } })
+    console.log(users);
+
+    res.status(200).json( users )
+})
+
+export const getConnectionsUser = catchAsync(async (req, res, next) => {
+    const userId = req.params.userId
+    console.log(userId);
+    const connections = await Message.find({ chatUsers: userId })
+    const connection = [];
+    
+    connections.map((message) => {
+        const chatUsers = message.chatUsers
+        const otherUsers = Object.values(chatUsers).filter((id) => id.toString() !== userId.toString());
+        connection.push(...otherUsers);
+    });
+
+    const uniqueConnections = [...new Set(connection)];
+
+    const users = await Vendor.find({ _id: { $in: uniqueConnections } })
+    console.log(users);
+
+    res.status(200).json( users )
+})
+
+export const getMessage = catchAsync(async (req, res, next) => {
+    const from = req.params.user1Id
+    const to = req.params.user2Id
+
+    const newMessage = await Message.find({
+        chatUsers: {
+            $all: [ from, to ]
+        }
+    }).sort({ updatedAt: 1 })
+
+    const allMessage = newMessage.map((msg) => {
+        console.log(msg, ".............kllllllllllljjjjjjjjjjjjjjj.sssssssssssssssssssssssssssssssssssssss");
+        return {
+            myself: msg.sender.toString() === from,
+            message: msg.message
+        }
+    })
+    console.log(allMessage,'-----------------++++++++++++++++++++++++++_________________________');
+    res.status(200).json(allMessage)
+
+})
+
 export const userProtect = catchAsync(async (req, res, next) => {
-    let token;
-    token = req.body.token;
+    const token = req.headers.authorization.split(" ")[1];
     console.log(token);
     if (!token) {
-            res.json({
-                user: false
-            })
+        res.json({
+            user: false
+        })
     }
 
     // 2) Verification token
@@ -343,7 +420,7 @@ export const userProtect = catchAsync(async (req, res, next) => {
 
     // 3) Check if user still exists
     console.log(decoded)
-    const currentUser = await User.findOne({_id:decoded.id});
+    const currentUser = await User.findOne({ _id: decoded.id });
     console.log(currentUser)
     if (!currentUser) {
         return next(
@@ -355,20 +432,26 @@ export const userProtect = catchAsync(async (req, res, next) => {
         );
     }
 
-    const userId = currentUser._id
-    console.log(userId);
-    res.json({ user: true, currentUser, userId })
+    // 4) Check if user changed password after the token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next(
+            new AppError("User recently changed password! Please log in again.", 401)
+        );
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    req.user = currentUser;
+    next();
 });
 
-
 export const adminProtect = catchAsync(async (req, res, next) => {
-    let token;
-    token = req.body.token;
+    console.log(req.headers);
+    const token = req.headers.authorization.split(" ")[1];
     console.log(token);
     if (!token) {
-            res.json({
-                user: false
-            })
+        res.json({
+            admin: false
+        })
     }
 
     // 2) Verification token
@@ -376,19 +459,64 @@ export const adminProtect = catchAsync(async (req, res, next) => {
 
     // 3) Check if user still exists
     console.log(decoded)
-    const currentUser = await Admin.findOne({_id:decoded.id});
-    console.log(currentUser)
-    if (!currentUser) {
+    const currentAdmin = await Admin.findOne({ _id: decoded.id });
+    console.log(currentAdmin)
+    if (!currentAdmin) {
         return next(
             new AppError(
                 res.json({
-                    user: false
+                    admin: false
                 })
             )
         );
     }
 
-    const userId = currentUser._id
-    console.log(userId);
-    res.json({ user: true, currentUser, userId })
+    // 4) Check if user changed password after the token was issued
+    if (currentAdmin.changedPasswordAfter(decoded.iat)) {
+        return next(
+            new AppError("User recently changed password! Please log in again.", 401)
+        );
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    req.admin = currentAdmin;
+    next();
+});
+
+export const vendorProtect = catchAsync(async (req, res, next) => {
+    const token = req.headers.authorization.split(" ")[1];
+    console.log(token);
+    if (!token) {
+        res.json({
+            vendor: false
+        })
+    }
+
+    // 2) Verification token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3) Check if user still exists
+    console.log(decoded)
+    const currentVendor = await Vendor.findOne({ _id: decoded.id });
+    console.log(currentVendor)
+    if (!currentVendor) {
+        return next(
+            new AppError(
+                res.json({
+                    vendor: false
+                })
+            )
+        );
+    }
+
+    // 4) Check if user changed password after the token was issued
+    if (currentVendor.changedPasswordAfter(decoded.iat)) {
+        return next(
+            new AppError("User recently changed password! Please log in again.", 401)
+        );
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    req.vendor = currentVendor;
+    next();
 });
