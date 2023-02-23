@@ -327,6 +327,7 @@ export const bookNow = catchAsync(async (req, res, next) => {
     const data = req.body
     const newBooking = await Booking.create({
         userId,
+        vendorId: data.gig.vendorId._id,
         title: data.gig.title,
         Requirements: data.Requirements,
         gigId: data.gig._id

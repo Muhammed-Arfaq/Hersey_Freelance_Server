@@ -1,3 +1,4 @@
+import Booking from "../Model/bookingModel.mjs";
 import Category from "../Model/categoryModel.mjs";
 import Gig from "../Model/gigModel.mjs";
 import Vendor from "../Model/vendorModel.mjs"
@@ -56,3 +57,14 @@ export const showAllGigs = catchAsync(async(req, res, next) => {
         }
     })
 })
+
+export const bookings = catchAsync(async(req, res, next) => {
+    const userId = req.user._id
+    const reserved = await Booking.find({ userId }).populate("gigId")
+    res.status(200).json({
+      status: "success",
+      data: {
+        reserved
+      }
+    })
+  })

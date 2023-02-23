@@ -12,6 +12,10 @@ const bookingSchema = new mongoose.Schema({
     Requirements: {
         type: String
     },
+    vendorId: {
+        type: Objectid,
+        ref: 'Vendor'
+    },
     gigId: {
         type: Objectid,
         ref: 'Gig'
