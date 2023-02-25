@@ -31,14 +31,7 @@ const gigSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now()
-    },
-    rating: {
-        type: Number,
-        Default: 0
-    },
-    review: {
-        type: String
-    },
+    }
 })
 
 const Gig = mongoose.model('Gig', gigSchema)

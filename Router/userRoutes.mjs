@@ -1,6 +1,6 @@
 import  express  from 'express'
-import { bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
-import { getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, userProfile } from '../Controller/userController.mjs'
+import { bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewGig, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
+import { cancelOrder, getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, updateUserProfile, userProfile, vendorRating, viewGigVendor } from '../Controller/userController.mjs'
 
 const router = express.Router()
 
@@ -56,13 +56,21 @@ router
     .route('/userProfile')
     .get(userProtect, userProfile)
 
+router  
+    .route("/updateUserProfile")
+    .patch(userProtect, updateUserProfile)
+
 router
     .route('/reserveNow')
     .post(userProtect, bookNow)
 
 router
+    .route("/cancelOrder")
+    .patch(userProtect, cancelOrder)
+
+router
     .route("/addReview")
-    .post(userProtect, reviewVendor)
+    .post(userProtect, reviewGig)
 
 router
     .route("/gigRating/:gigId")
@@ -71,5 +79,17 @@ router
 router
     .route("/reservedGigs")
     .get(userProtect, reservedGigs)
+
+router
+    .route("/viewVendorGigs/:vendorId")
+    .get(userProtect, viewGigVendor)
+
+router
+    .route("/reviewVendor")
+    .post(userProtect, reviewVendor)
+
+router
+    .route("/vendorRating/:id")
+    .get(userProtect, vendorRating)
 
 export default router

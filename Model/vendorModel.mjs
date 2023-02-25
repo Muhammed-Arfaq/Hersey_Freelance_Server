@@ -48,11 +48,17 @@ const vendorSchema = new mongoose.Schema({
             type: String,
         }
     },
+    upiId: {
+        type: String
+    },
     about: {
         type: String
     },
     profilePhoto: {
         type: String
+    },
+    dob: {
+        type: Date
     },
     gender: {
         type: String,
@@ -84,13 +90,6 @@ const vendorSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now()
-    },
-    rating: {
-        type: Number,
-        Default: 0
-    },
-    review: {
-        type: String
     },
     payment: {
         type: String

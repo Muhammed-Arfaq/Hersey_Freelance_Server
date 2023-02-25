@@ -3,7 +3,6 @@ import { promisify } from 'util'
 import catchAsync from '../utils/catchAsync.mjs'
 import AppError from '../utils/appError.mjs'
 import nodemailer from 'nodemailer'
-import mongoose from 'mongoose'
 import User from '../Model/userModel.mjs'
 import Admin from '../Model/adminModel.mjs'
 import Vendor from '../Model/vendorModel.mjs'
@@ -12,6 +11,8 @@ import Category from '../Model/categoryModel.mjs'
 import Booking from '../Model/bookingModel.mjs'
 import Message from '../Model/messageModel.mjs'
 import Review from '../Model/reviewModel.mjs'
+import fileUploader from '../Cloudinary/fileUploader.mjs'
+import vendorReview from '../Model/vendorReviewModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
@@ -22,6 +23,8 @@ let email
 let phone
 let password
 let passwordConfirm
+let gender
+let dob
 
 let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -51,16 +54,6 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
-    // const cookieOPtions = {
-    //     expires: new Date(
-    //         Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    //     ),
-    //     httpOnly: true,
-    // };
-    // if (process.env.NODE_ENV === "production") {
-    //     cookieOPtions.secure = true;
-    // }
-    // res.cookie("jwt", token, cookieOPtions);
 
     //remove the password from the output
     user.password = undefined;
@@ -77,11 +70,11 @@ const createSendToken = (user, statusCode, res) => {
 export const OTP = catchAsync(async (req, res, next) => {
 
     fullName = req.body.fullName,
-        userName = req.body.userName,
-        email = req.body.email,
-        phone = req.body.phone,
-        password = req.body.password,
-        passwordConfirm = req.body.passwordConfirm;
+    userName = req.body.userName,
+    email = req.body.email,
+    phone = req.body.phone,
+    password = req.body.password,
+    passwordConfirm = req.body.passwordConfirm;
 
     const user = await User.findOne({ email: email })
 
@@ -151,25 +144,14 @@ export const verifyOTP = catchAsync(async (req, res, next) => {
     }
 })
 
-// export const vendorSignup = catchAsync(async (req, res, next) => {
-//     const newVendor = await Vendor.create({
-//       fullName: req.body.fullName,
-//       userName: req.body.userName,
-//       email: req.body.email,
-//       phone: req.body.phone,
-//       password: req.body.password,
-//       passwordConfirm: req.body.passwordConfirm
-//     });
-
-//     createSendToken(newVendor, 201, res);
-// });
-
 export const vendorOTP = catchAsync(async (req, res) => {
 
     fullName = req.body.fullName,
     userName = req.body.userName,
     email = req.body.email,
     phone = req.body.phone,
+    gender = req.body.gender,
+    dob = req.body.dob,
     password = req.body.password,
     passwordConfirm = req.body.passwordConfirm;
 
@@ -210,6 +192,8 @@ export const verifyVendorOTP = catchAsync(async (req, res) => {
             userName: userName,
             email: email,
             phone: phone,
+            gender: gender,
+            dob: dob,
             password: password,
             passwordConfirm: passwordConfirm
         });
@@ -291,11 +275,12 @@ export const vendorLogin = catchAsync(async (req, res, next) => {
 });
 
 export const vendorGig = catchAsync(async (req, res, next) => {
-    console.log(req.body);
+    const file = await fileUploader(req.body.gigImage)
+    console.log(file);
     const newGig = await Gig.create({
         title: req.body.title,
         overview: req.body.overview,
-        image: req.body.gigImage,
+        image: file,
         type: req.body.type,
         description: req.body.description,
         price: req.body.price,
@@ -329,7 +314,7 @@ export const bookNow = catchAsync(async (req, res, next) => {
         userId,
         vendorId: data.gig.vendorId._id,
         title: data.gig.title,
-        Requirements: data.Requirements,
+        requirements: data.requirements,
         gigId: data.gig._id
     })
     res.status(200).json({
@@ -340,7 +325,7 @@ export const bookNow = catchAsync(async (req, res, next) => {
     });
 })
 
-export const reviewVendor = catchAsync(async(req, res, next) => {
+export const reviewGig = catchAsync(async(req, res, next) => {
     const userId = req.user._id
     const data = req.body
     console.log(data);
@@ -351,6 +336,26 @@ export const reviewVendor = catchAsync(async(req, res, next) => {
         title: data.reviewData.title,
         description: data.reviewData.description
     })
+    res.status(200).json({
+        data: {
+            newReview
+        }
+    })
+})
+
+export const reviewVendor = catchAsync(async(req, res, next) => {
+    const userId = req.user._id
+    const data = req.body
+    const vendorId = data.reviewData.vendor
+    console.log(vendorId);
+    const newReview = await vendorReview.create({
+        userId,
+        vendorId: data.reviewData.vendor,
+        rating: data.reviewData.rating,
+        title: data.reviewData.title,
+        description: data.reviewData.description
+    })
+
     res.status(200).json({
         data: {
             newReview

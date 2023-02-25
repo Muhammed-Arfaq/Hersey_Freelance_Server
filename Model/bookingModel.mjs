@@ -9,7 +9,7 @@ const bookingSchema = new mongoose.Schema({
     title: {
         type: String
     },
-    Requirements: {
+    requirements: {
         type: String
     },
     vendorId: {
