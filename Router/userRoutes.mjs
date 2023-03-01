@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewGig, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
+import { allMessageCount, bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewGig, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
 import { cancelOrder, getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, updateUserProfile, userAuth, userProfile, vendorRating, viewGigVendor } from '../Controller/userController.mjs'
 
 const router = express.Router()
@@ -47,6 +47,10 @@ router
 router
     .route('/getMessage/:user1Id/:user2Id')
     .get(getMessage)
+
+router
+    .route("/getMessageCount/:userId")
+    .get(allMessageCount)
 
 router
     .route('/getUserConnections/:userId')

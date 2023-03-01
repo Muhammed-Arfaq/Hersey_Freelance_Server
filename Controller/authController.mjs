@@ -70,11 +70,11 @@ const createSendToken = (user, statusCode, res) => {
 export const OTP = catchAsync(async (req, res, next) => {
 
     fullName = req.body.fullName,
-    userName = req.body.userName,
-    email = req.body.email,
-    phone = req.body.phone,
-    password = req.body.password,
-    passwordConfirm = req.body.passwordConfirm;
+        userName = req.body.userName,
+        email = req.body.email,
+        phone = req.body.phone,
+        password = req.body.password,
+        passwordConfirm = req.body.passwordConfirm;
 
     const user = await User.findOne({ email: email })
 
@@ -147,13 +147,13 @@ export const verifyOTP = catchAsync(async (req, res, next) => {
 export const vendorOTP = catchAsync(async (req, res) => {
 
     fullName = req.body.fullName,
-    userName = req.body.userName,
-    email = req.body.email,
-    phone = req.body.phone,
-    gender = req.body.gender,
-    dob = req.body.dob,
-    password = req.body.password,
-    passwordConfirm = req.body.passwordConfirm;
+        userName = req.body.userName,
+        email = req.body.email,
+        phone = req.body.phone,
+        gender = req.body.gender,
+        dob = req.body.dob,
+        password = req.body.password,
+        passwordConfirm = req.body.passwordConfirm;
 
     const vendor = await Vendor.findOne({ email: email })
 
@@ -331,7 +331,7 @@ export const bookNow = catchAsync(async (req, res, next) => {
     });
 })
 
-export const reviewGig = catchAsync(async(req, res, next) => {
+export const reviewGig = catchAsync(async (req, res, next) => {
     const userId = req.user._id
     const data = req.body
     console.log(data);
@@ -349,7 +349,7 @@ export const reviewGig = catchAsync(async(req, res, next) => {
     })
 })
 
-export const reviewVendor = catchAsync(async(req, res, next) => {
+export const reviewVendor = catchAsync(async (req, res, next) => {
     const userId = req.user._id
     const data = req.body
     const vendorId = data.reviewData.vendor
@@ -374,7 +374,7 @@ export const chat = catchAsync(async (req, res, next) => {
     const { from, to, message } = req.body
     const newMessage = await Message.create({
         message: message,
-        chatUsers: [ from, to ],
+        chatUsers: [from, to],
         sender: from
     })
     res.status(200).json({
@@ -401,17 +401,18 @@ export const getConnections = catchAsync(async (req, res, next) => {
     const users = await User.find({ _id: { $in: uniqueConnections } })
     console.log(users);
 
-    res.status(200).json( users )
+    res.status(200).json(users)
 })
 
 export const getConnectionsUser = catchAsync(async (req, res, next) => {
     console.log("hereeeee");
     const userId = req.params.userId
+    let connectionCount = []
     const connections = await Message.find({ chatUsers: userId })
     const connection = [];
-    
+
     connections.map((message) => {
-        const chatUsers = message.chatUsers 
+        const chatUsers = message.chatUsers
         console.log(chatUsers);
         const otherUsers = Object.values(chatUsers).filter((id) => id.toString() !== userId.toString());
         connection.push(...otherUsers);
@@ -420,8 +421,31 @@ export const getConnectionsUser = catchAsync(async (req, res, next) => {
     const uniqueConnections = [...new Set(connection)];
 
     const users = await Vendor.find({ _id: { $in: uniqueConnections } })
+    const messages = await Message.find({ read: false });
+    const counts = {};
+    messages.forEach(message => {
+      message.chatUsers.forEach(userId => {
+        if (!counts[userId]) {
+          counts[userId] = 1;
+        } else {
+          counts[userId]++;
+        }
+      });
+    });
+    const results = Object.entries(counts).map(([userId, count]) => ({ userId, count }));
+    users.map((vendorId) => {
+        results.map((data) => vendorId._id == data.userId ? connectionCount.push(data) : null )
+    })
 
-    res.status(200).json( users )
+    console.log(connectionCount);
+
+    res.status(200).json({users, connectionCount})
+})
+
+export const allMessageCount = catchAsync(async(req, res, next) => {
+    const userId = req.params.userId
+    const count = await Message.countDocuments({ chatUsers: userId, read: false });
+    res.status(200).json({count})
 })
 
 export const getMessage = catchAsync(async (req, res, next) => {
@@ -430,7 +454,7 @@ export const getMessage = catchAsync(async (req, res, next) => {
 
     const newMessage = await Message.find({
         chatUsers: {
-            $all: [ from, to ]
+            $all: [from, to]
         }
     }).sort({ updatedAt: 1 })
 
@@ -440,8 +464,9 @@ export const getMessage = catchAsync(async (req, res, next) => {
             message: msg.message
         }
     })
-    res.status(200).json(allMessage)
+    await Message.updateMany({ chatUsers: {  $all: [from, to] }, sender: { $ne: from } }, { $set: { read: true } })
 
+    res.status(200).json(allMessage)
 })
 
 export const userProtect = catchAsync(async (req, res, next) => {
