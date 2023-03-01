@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { bookNow, chat, getConnectionsUser, getMessage, login, OTP, reviewGig, reviewVendor, userProtect, verifyOTP }  from '../Controller/authController.mjs'
-import { cancelOrder, getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, updateUserProfile, userProfile, vendorRating, viewGigVendor } from '../Controller/userController.mjs'
+import { cancelOrder, getAllGigs, getAllVendor, getVendorDetail, gigRating, products, reservedGigs, services, singleGig, updateUserProfile, userAuth, userProfile, vendorRating, viewGigVendor } from '../Controller/userController.mjs'
 
 const router = express.Router()
 
@@ -63,6 +63,10 @@ router
 router
     .route('/reserveNow')
     .post(userProtect, bookNow)
+
+router
+    .route("/userAuth")
+    .get(userProtect, userAuth)
 
 router
     .route("/cancelOrder")

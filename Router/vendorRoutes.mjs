@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
-import { bookings, cancelUserOrder, completeUserOrder, showAllCategory, showAllGigs, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
+import { bookings, cancelUserOrder, completeUserOrder, deleteGig, showAllCategory, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorAuth, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
 
@@ -21,6 +21,10 @@ router
     .get(vendorProtect, vendorProfile)
 
 router
+    .route("/vendorAuth/:id")
+    .get(vendorProtect, vendorAuth)
+
+router
     .route("/updateVendorProfile")
     .patch(vendorProtect, updateVendorProfile)
 
@@ -36,9 +40,9 @@ router
     .route('/newGig')
     .post(vendorProtect, vendorGig)
 
-router
-    .route('/showGigs')
-    .get(vendorProtect, showAllGigs)
+router  
+    .route("/deleteGig/:id")
+    .delete(vendorProtect, deleteGig)
 
 router
     .route('/categories')

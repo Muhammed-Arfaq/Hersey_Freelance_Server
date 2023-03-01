@@ -17,6 +17,15 @@ export const vendorProfile = catchAsync(async (req, res, next) => {
     })
 })
 
+export const vendorAuth = catchAsync(async(req, res, next) => {
+    const vendorId = req.params.id
+    const userData = await Vendor.findOne({ _id: vendorId })
+    res.status(200).json({
+      status: "success",
+      userData
+    })
+  })
+
 export const updateVendorAddress = catchAsync(async (req, res, next) => {
     console.log(req.params.id);
     let { pincode, country, currentAddress, city, state } = req.body
@@ -83,18 +92,8 @@ export const updateVendorProfile = catchAsync(async (req, res, next) => {
     })
 })
 
-export const showAllGigs = catchAsync(async (req, res, next) => {
-    const allGigs = await Gig.find()
-    res.status(200).json({
-        status: "success",
-        data: {
-            allGigs
-        }
-    })
-})
-
 export const showAllCategory = catchAsync(async (req, res, next) => {
-    const categories = await Category.find()
+    const categories = await Category.find().sort({ date: -1 })
     res.status(200).json({
         status: 'success',
         data: {
@@ -105,7 +104,7 @@ export const showAllCategory = catchAsync(async (req, res, next) => {
 
 export const bookings = catchAsync(async (req, res, next) => {
     const vendorId = req.vendor._id
-    const reserved = await Booking.find({ vendorId }).populate("gigId").populate("userId")
+    const reserved = await Booking.find({ vendorId }).populate("gigId").populate("userId").sort({ date: -1 })
     res.status(200).json({
         status: "success",
         data: {
@@ -125,9 +124,16 @@ export const viewGigs = catchAsync(async (req, res, next) => {
     })
 })
 
+export const deleteGig = catchAsync(async(req, res, next) => {
+    await Gig.findByIdAndDelete({ _id: req.params.id })
+    res.status(200).json({
+        status: "Success"
+    })
+})
+
 export const vendorRatings = catchAsync(async (req, res, next) => {
     const vendorId = req.vendor._id
-    const review = await vendorReview.find({ vendorId: vendorId }).populate("userId")
+    const review = await vendorReview.find({ vendorId: vendorId }).populate("userId").sort({ date: -1 })
     res.status(200).json({
         status: "success",
         data: {

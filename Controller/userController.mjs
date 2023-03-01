@@ -29,7 +29,7 @@ export const getVendorDetail = catchAsync(async (req, res) => {
 })
 
 export const getAllGigs = catchAsync(async (req, res, next) => {
-  const allGigs = await Gig.find()
+  const allGigs = await Gig.find().sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -49,8 +49,17 @@ export const singleGig = catchAsync(async (req, res, next) => {
   })
 })
 
+export const userAuth = catchAsync(async(req, res, next) => {
+  const userId = req.user._id
+  const userData = await User.findOne({  _id: userId })
+  res.status(200).json({
+    status: "success",
+    userData
+  })
+})
+
 export const services = catchAsync(async (req, res, next) => {
-  const services = await Gig.find({ type: "Service" })
+  const services = await Gig.find({ type: "Service" }).sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -60,7 +69,7 @@ export const services = catchAsync(async (req, res, next) => {
 })
 
 export const products = catchAsync(async (req, res, next) => {
-  const products = await Gig.find({ type: "Product" })
+  const products = await Gig.find({ type: "Product" }).sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -84,7 +93,7 @@ export const userProfile = catchAsync(async (req, res, next) => {
 export const gigRating = catchAsync(async (req, res, next) => {
   const gigId = req.params.gigId
   console.log(gigId);
-  const review = await Review.find({ gigId: gigId }).populate("gigId").populate("userId")
+  const review = await Review.find({ gigId: gigId }).populate("gigId").populate("userId").sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -95,7 +104,7 @@ export const gigRating = catchAsync(async (req, res, next) => {
 
 export const reservedGigs = catchAsync(async (req, res, next) => {
   const userId = req.user._id
-  const reserved = await Booking.find({ userId }).populate("gigId")
+  const reserved = await Booking.find({ userId }).populate("gigId").sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -106,7 +115,7 @@ export const reservedGigs = catchAsync(async (req, res, next) => {
 
 export const viewGigVendor = catchAsync(async (req, res, next) => {
   const vendorId = req.params.vendorId
-  const viewGig = await Gig.find({ vendorId }).populate("category")
+  const viewGig = await Gig.find({ vendorId }).populate("category").sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {
@@ -117,7 +126,7 @@ export const viewGigVendor = catchAsync(async (req, res, next) => {
 
 export const vendorRating = catchAsync(async (req, res, next) => {
   const vendorId = req.params.id
-  const review = await vendorReview.find({ vendorId: vendorId }).populate("vendorId").populate("userId")
+  const review = await vendorReview.find({ vendorId: vendorId }).populate("vendorId").populate("userId").sort({ date: -1 })
   res.status(200).json({
     status: "success",
     data: {

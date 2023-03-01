@@ -33,8 +33,8 @@ let transporter = nodemailer.createTransport({
     service: 'Gmail',
 
     auth: {
-        user: 'herseyfreelance@gmail.com',
-        pass: 'xpgiggtjhxbkrztb',
+        user: 'herseyfreelance23@gmail.com',
+        pass: 'dpbquhuveeksnxnb',
     }
 
 });
@@ -59,7 +59,7 @@ const createSendToken = (user, statusCode, res) => {
     user.password = undefined;
 
     res.status(statusCode).json({
-        status: 'success',
+        status: 'Success',
         token,
         data: {
             user
@@ -221,7 +221,9 @@ export const login = catchAsync(async (req, res, next) => {
     }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-        return next(new AppError("wrong information"));
+        res.json({
+            status: "Wrong Password"
+        })
     }
 
     //if everything is correct, send token to user
@@ -243,7 +245,9 @@ export const adminLogin = catchAsync(async (req, res, next) => {
     }).select("+password");
 
     if (!admin || !(await admin.correctPassword(password, admin.password))) {
-        return next(new AppError("wrong information"));
+        res.json({
+            status: "Wrong Password"
+        })
     }
 
     //if everything is correct, send token to admin
@@ -266,7 +270,9 @@ export const vendorLogin = catchAsync(async (req, res, next) => {
     console.log(vendor);
 
     if (!vendor || !(await vendor.correctPassword(password, vendor.password))) {
-        return next(new AppError("wrong password"));
+        res.json({
+            status: "Wrong Password"
+        })
     }
 
     //if everything is correct, send token to vendor
@@ -399,13 +405,14 @@ export const getConnections = catchAsync(async (req, res, next) => {
 })
 
 export const getConnectionsUser = catchAsync(async (req, res, next) => {
+    console.log("hereeeee");
     const userId = req.params.userId
-    console.log(userId);
     const connections = await Message.find({ chatUsers: userId })
     const connection = [];
     
     connections.map((message) => {
-        const chatUsers = message.chatUsers
+        const chatUsers = message.chatUsers 
+        console.log(chatUsers);
         const otherUsers = Object.values(chatUsers).filter((id) => id.toString() !== userId.toString());
         connection.push(...otherUsers);
     });
@@ -413,7 +420,6 @@ export const getConnectionsUser = catchAsync(async (req, res, next) => {
     const uniqueConnections = [...new Set(connection)];
 
     const users = await Vendor.find({ _id: { $in: uniqueConnections } })
-    console.log(users);
 
     res.status(200).json( users )
 })
@@ -429,20 +435,17 @@ export const getMessage = catchAsync(async (req, res, next) => {
     }).sort({ updatedAt: 1 })
 
     const allMessage = newMessage.map((msg) => {
-        console.log(msg, ".............kllllllllllljjjjjjjjjjjjjjj.sssssssssssssssssssssssssssssssssssssss");
         return {
             myself: msg.sender.toString() === from,
             message: msg.message
         }
     })
-    console.log(allMessage,'-----------------++++++++++++++++++++++++++_________________________');
     res.status(200).json(allMessage)
 
 })
 
 export const userProtect = catchAsync(async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
     if (!token) {
         res.json({
             user: false
@@ -453,9 +456,7 @@ export const userProtect = catchAsync(async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
-    console.log(decoded)
     const currentUser = await User.findOne({ _id: decoded.id });
-    console.log(currentUser)
     if (!currentUser) {
         return next(
             new AppError(
@@ -481,7 +482,6 @@ export const userProtect = catchAsync(async (req, res, next) => {
 export const adminProtect = catchAsync(async (req, res, next) => {
     console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
     if (!token) {
         res.json({
             admin: false
@@ -494,7 +494,6 @@ export const adminProtect = catchAsync(async (req, res, next) => {
     // 3) Check if user still exists
     console.log(decoded)
     const currentAdmin = await Admin.findOne({ _id: decoded.id });
-    console.log(currentAdmin)
     if (!currentAdmin) {
         return next(
             new AppError(
@@ -519,7 +518,6 @@ export const adminProtect = catchAsync(async (req, res, next) => {
 
 export const vendorProtect = catchAsync(async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
     if (!token) {
         res.json({
             vendor: false
@@ -532,7 +530,6 @@ export const vendorProtect = catchAsync(async (req, res, next) => {
     // 3) Check if user still exists
     console.log(decoded)
     const currentVendor = await Vendor.findOne({ _id: decoded.id });
-    console.log(currentVendor)
     if (!currentVendor) {
         return next(
             new AppError(
