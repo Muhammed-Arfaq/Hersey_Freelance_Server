@@ -386,7 +386,8 @@ export const chat = catchAsync(async (req, res, next) => {
 
 export const getConnections = catchAsync(async (req, res, next) => {
     const vendorId = req.params.vendorId
-    const connections = await Message.find({ chatUsers: vendorId })
+    let connectionCount = []
+    const connections = await Message.find({ chatUsers: vendorId }).sort({ createdAt: -1 })
     const connection = [];
     console.log(connections, ',,,,,,,,,iiiiiiioooooooooooppppppppp');
     connections.map((message) => {
@@ -399,53 +400,77 @@ export const getConnections = catchAsync(async (req, res, next) => {
     const uniqueConnections = [...new Set(connection)];
 
     const users = await User.find({ _id: { $in: uniqueConnections } })
-    console.log(users);
+    const sortedUsers = uniqueConnections.map(id => users.find(user => user._id.toString() === id));
 
-    res.status(200).json(users)
+    const messages = await Message.find({ chatUsers: vendorId, sender: { $ne: vendorId }, read: false });
+    console.log(messages);
+    const counts = {};
+    messages.forEach(message => {
+        message.chatUsers.forEach(userId => {
+            if (!counts[userId]) {
+                counts[userId] = 1;
+            } else {
+                counts[userId]++;
+            }
+        });
+    });
+    const results = Object.entries(counts).map(([userId, count]) => ({ userId, count }));
+    users.map((vendorId) => {
+        results.map((data) => vendorId._id == data.userId ? connectionCount.push(data) : null)
+    })
+
+    res.status(200).json({ sortedUsers, connectionCount })
 })
 
 export const getConnectionsUser = catchAsync(async (req, res, next) => {
-    console.log("hereeeee");
+
     const userId = req.params.userId
     let connectionCount = []
-    const connections = await Message.find({ chatUsers: userId })
+    const connections = await Message.find({ chatUsers: userId }).sort({ createdAt: -1 })
     const connection = [];
 
     connections.map((message) => {
         const chatUsers = message.chatUsers
-        console.log(chatUsers);
         const otherUsers = Object.values(chatUsers).filter((id) => id.toString() !== userId.toString());
         connection.push(...otherUsers);
+
     });
 
     const uniqueConnections = [...new Set(connection)];
 
     const users = await Vendor.find({ _id: { $in: uniqueConnections } })
-    const messages = await Message.find({ read: false });
+
+    const sortedUsers = uniqueConnections.map(id => users.find(user => user._id.toString() === id));
+
+    const messages = await Message.find({ chatUsers: userId, sender: { $ne: userId },  read: false });
     const counts = {};
     messages.forEach(message => {
-      message.chatUsers.forEach(userId => {
-        if (!counts[userId]) {
-          counts[userId] = 1;
-        } else {
-          counts[userId]++;
-        }
-      });
+        message.chatUsers.forEach(userId => {
+            if (!counts[userId]) {
+                counts[userId] = 1;
+            } else {
+                counts[userId]++;
+            }
+        });
     });
     const results = Object.entries(counts).map(([userId, count]) => ({ userId, count }));
     users.map((vendorId) => {
-        results.map((data) => vendorId._id == data.userId ? connectionCount.push(data) : null )
+        results.map((data) => vendorId._id == data.userId ? connectionCount.push(data) : null)
     })
 
-    console.log(connectionCount);
-
-    res.status(200).json({users, connectionCount})
+    res.status(200).json({ sortedUsers, connectionCount })
 })
 
-export const allMessageCount = catchAsync(async(req, res, next) => {
+export const allMessageCountVendor = catchAsync(async (req, res, next) => {
+    const vendorId = req.params.vendorId
+    const count = await Message.countDocuments({ chatUsers: vendorId, sender: { $ne: vendorId }, read: false });
+    res.status(200).json({ count })
+})
+
+export const allMessageCount = catchAsync(async (req, res, next) => {
     const userId = req.params.userId
-    const count = await Message.countDocuments({ chatUsers: userId, read: false });
-    res.status(200).json({count})
+    const count = await Message.countDocuments({ chatUsers: userId, sender: { $ne: userId }, read: false });
+    res.status(200).json({ count })
 })
 
 export const getMessage = catchAsync(async (req, res, next) => {
@@ -456,7 +481,7 @@ export const getMessage = catchAsync(async (req, res, next) => {
         chatUsers: {
             $all: [from, to]
         }
-    }).sort({ updatedAt: 1 })
+    }).sort({ createdAt: 1 })
 
     const allMessage = newMessage.map((msg) => {
         return {
@@ -464,7 +489,7 @@ export const getMessage = catchAsync(async (req, res, next) => {
             message: msg.message
         }
     })
-    await Message.updateMany({ chatUsers: {  $all: [from, to] }, sender: { $ne: from } }, { $set: { read: true } })
+    await Message.updateMany({ chatUsers: { $all: [from, to] }, sender: { $ne: from } }, { $set: { read: true } })
 
     res.status(200).json(allMessage)
 })

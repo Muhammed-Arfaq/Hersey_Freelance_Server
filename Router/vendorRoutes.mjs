@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
+import { allMessageCountVendor, getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
 import { bookings, cancelUserOrder, completeUserOrder, deleteGig, showAllCategory, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorAuth, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
@@ -71,6 +71,10 @@ router
 router
     .route("/cancelUserOrder")
     .patch(vendorProtect, cancelUserOrder)
+
+router
+    .route("/getVendorMessageCount/:vendorId")
+    .get(allMessageCountVendor)
 
 router
     .route("/completeUserOrder")
