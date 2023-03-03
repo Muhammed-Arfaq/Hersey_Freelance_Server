@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { approveVendor, blockUser, blockVendor, deleteCategory, getAllCategory, getAllUsers, getAllVendors, getVendorDetails, unBlockUser } from '../Controller/adminController.mjs'
+import { approveVendor, blockUser, blockVendor, dashboardCount, deleteCategory, getAllCategory, getAllUsers, getAllVendors, getVendorDetails, newUsers, unBlockUser } from '../Controller/adminController.mjs'
 import { addCategory, adminLogin, adminProtect }  from '../Controller/authController.mjs'
 
 const router = express.Router()
@@ -51,5 +51,13 @@ router
 router
     .route('/categories')
     .get(adminProtect, getAllCategory)
+
+router
+    .route('/dashboardCount')
+    .get(adminProtect, dashboardCount)
+
+router
+    .route('/newUsers')
+    .get(adminProtect, newUsers)
 
 export default router

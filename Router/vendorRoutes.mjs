@@ -1,6 +1,6 @@
 import  express  from 'express'
 import { allMessageCountVendor, getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
-import { bookings, cancelUserOrder, completeUserOrder, deleteGig, showAllCategory, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorAuth, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
+import { bookings, cancelUserOrder, completedOrder, completeUserOrder, deleteGig, fetchOrders, showAllCategory, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorAuth, vendorDashboardCount, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
 
@@ -79,5 +79,17 @@ router
 router
     .route("/completeUserOrder")
     .patch(vendorProtect, completeUserOrder)
+
+router
+    .route('/vendorDasboardCount')
+    .get(vendorProtect, vendorDashboardCount)
+
+router
+    .route('/fetchAllOrders')
+    .get(vendorProtect, fetchOrders)
+
+router
+    .route("/completed-orders-by-date")
+    .get(vendorProtect, completedOrder)
 
 export default router

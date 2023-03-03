@@ -2,6 +2,7 @@ import fileUploader from "../Cloudinary/fileUploader.mjs";
 import Booking from "../Model/bookingModel.mjs";
 import Category from "../Model/categoryModel.mjs";
 import Gig from "../Model/gigModel.mjs";
+import Message from "../Model/messageModel.mjs";
 import Vendor from "../Model/vendorModel.mjs"
 import vendorReview from "../Model/vendorReviewModel.mjs";
 import catchAsync from "../utils/catchAsync.mjs"
@@ -17,14 +18,14 @@ export const vendorProfile = catchAsync(async (req, res, next) => {
     })
 })
 
-export const vendorAuth = catchAsync(async(req, res, next) => {
+export const vendorAuth = catchAsync(async (req, res, next) => {
     const vendorId = req.params.id
     const userData = await Vendor.findOne({ _id: vendorId })
     res.status(200).json({
-      status: "success",
-      userData
+        status: "success",
+        userData
     })
-  })
+})
 
 export const updateVendorAddress = catchAsync(async (req, res, next) => {
     console.log(req.params.id);
@@ -124,7 +125,7 @@ export const viewGigs = catchAsync(async (req, res, next) => {
     })
 })
 
-export const deleteGig = catchAsync(async(req, res, next) => {
+export const deleteGig = catchAsync(async (req, res, next) => {
     await Gig.findByIdAndDelete({ _id: req.params.id })
     res.status(200).json({
         status: "Success"
@@ -176,5 +177,50 @@ export const completeUserOrder = catchAsync(async (req, res, next) => {
     await Booking.findOneAndUpdate({ _id: orderId }, { $set: { status: "Completed" } })
     res.status(200).json({
         status: "success"
+    })
+})
+
+export const vendorDashboardCount = catchAsync(async (req, res, next) => {
+    const vendorId = req.vendor._id
+    const gigsCount = await Gig.countDocuments({ vendorId: vendorId })
+    const msgCount = await Message.countDocuments({ chatUsers: vendorId, sender: { $ne: vendorId }, read: false });
+    const orderCount = await Booking.countDocuments({ vendorId: vendorId })
+    const reviewCount = await vendorReview.countDocuments({ vendorId: vendorId })
+    res.status(200).json({
+        gigsCount,
+        msgCount,
+        orderCount,
+        reviewCount,
+    })
+})
+
+export const fetchOrders = catchAsync(async (req, res, next) => {
+    const vendorOrders = await Booking.find()
+    res.status(200).json({
+        vendorOrders
+    })
+})
+
+export const completedOrder = catchAsync(async (req, res, next) => {
+    const completedOrders = await Booking.aggregate([
+        {
+            $match: { status: "Completed" }
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: "$date" },
+                    month: { $month: "$date" },
+                    day: { $dayOfMonth: "$date" }
+                },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { _id: 1 }
+        }
+    ])
+    res.status(200).json({
+        completedOrders
     })
 })

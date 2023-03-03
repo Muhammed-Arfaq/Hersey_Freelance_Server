@@ -77,3 +77,23 @@ export const deleteCategory = catchAsync(async(req, res, next ) => {
         status: 'success',
       });
 })
+
+export const dashboardCount = catchAsync(async(req, res, next) => {
+    const unblockedUserCount = await User.countDocuments({ status: "Active" })
+    const blockedUserCount = await User.countDocuments({ status: "Blocked" })
+    const approvedVendorCount = await Vendor.countDocuments({ status: "Approved" })
+    const blockedVendorCount = await Vendor.countDocuments({ status: "Not Approved" })    
+    res.status(200).json({
+        unblockedUserCount,
+        blockedUserCount,
+        approvedVendorCount,
+        blockedVendorCount
+    })
+})
+
+export const newUsers = catchAsync(async(req, res, next) => {
+    const newUser = await User.find().sort({ date: -1 }).limit(10)
+    res.status(200).json({
+        newUser
+    })
+})

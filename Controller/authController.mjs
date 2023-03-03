@@ -353,7 +353,6 @@ export const reviewVendor = catchAsync(async (req, res, next) => {
     const userId = req.user._id
     const data = req.body
     const vendorId = data.reviewData.vendor
-    console.log(vendorId);
     const newReview = await vendorReview.create({
         userId,
         vendorId: data.reviewData.vendor,
@@ -389,7 +388,6 @@ export const getConnections = catchAsync(async (req, res, next) => {
     let connectionCount = []
     const connections = await Message.find({ chatUsers: vendorId }).sort({ createdAt: -1 })
     const connection = [];
-    console.log(connections, ',,,,,,,,,iiiiiiioooooooooooppppppppp');
     connections.map((message) => {
         const chatUsers = message.chatUsers
         console.log(chatUsers);
