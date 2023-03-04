@@ -195,7 +195,8 @@ export const vendorDashboardCount = catchAsync(async (req, res, next) => {
 })
 
 export const fetchOrders = catchAsync(async (req, res, next) => {
-    const vendorOrders = await Booking.find()
+    const vendorId = req.vendor._id
+    const vendorOrders = await Booking.find({ vendorId: vendorId }).sort({ date: -1 }).limit(10)
     res.status(200).json({
         vendorOrders
     })
