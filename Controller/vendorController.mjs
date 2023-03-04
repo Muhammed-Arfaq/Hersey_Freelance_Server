@@ -183,7 +183,7 @@ export const completeUserOrder = catchAsync(async (req, res, next) => {
 export const vendorDashboardCount = catchAsync(async (req, res, next) => {
     const vendorId = req.vendor._id
     const gigsCount = await Gig.countDocuments({ vendorId: vendorId })
-    const msgCount = await Message.countDocuments({ chatUsers: vendorId, sender: { $ne: vendorId }, read: false });
+    const msgCount = await Message.countDocuments({ chatUsers: vendorId.toString(), sender: { $ne: vendorId }, read: false });
     const orderCount = await Booking.countDocuments({ vendorId: vendorId })
     const reviewCount = await vendorReview.countDocuments({ vendorId: vendorId })
     res.status(200).json({
@@ -209,9 +209,9 @@ export const completedOrder = catchAsync(async (req, res, next) => {
         {
             $group: {
                 _id: {
-                    year: { $year: "$date" },
-                    month: { $month: "$date" },
-                    day: { $dayOfMonth: "$date" }
+                    year: { $year: "$updatedAt" },
+                    month: { $month: "$updatedAt" },
+                    day: { $dayOfMonth: "$updatedAt" }
                 },
                 count: { $sum: 1 }
             }
