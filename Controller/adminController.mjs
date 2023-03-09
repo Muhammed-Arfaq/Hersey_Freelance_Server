@@ -92,7 +92,7 @@ export const dashboardCount = catchAsync(async(req, res, next) => {
 })
 
 export const newUsers = catchAsync(async(req, res, next) => {
-    const newUser = await User.find().sort({ date: -1 }).limit(10)
+    const newUser = await User.find().sort({ date: -1 }).limit(7)
     res.status(200).json({
         newUser
     })

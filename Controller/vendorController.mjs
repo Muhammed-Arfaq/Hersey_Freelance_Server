@@ -144,7 +144,6 @@ export const vendorRatings = catchAsync(async (req, res, next) => {
 })
 
 export const updateVendorGigs = catchAsync(async (req, res, next) => {
-    console.log(req.body.data);
     let { title, overview, description, price, category, type, gigImage, gigId } = req.body.data
     const file = await fileUploader(gigImage)
     console.log(file);
@@ -196,7 +195,7 @@ export const vendorDashboardCount = catchAsync(async (req, res, next) => {
 
 export const fetchOrders = catchAsync(async (req, res, next) => {
     const vendorId = req.vendor._id
-    const vendorOrders = await Booking.find({ vendorId: vendorId }).sort({ date: -1 }).limit(10)
+    const vendorOrders = await Booking.find({ vendorId: vendorId }).sort({ date: -1 }).limit(7)
     res.status(200).json({
         vendorOrders
     })
