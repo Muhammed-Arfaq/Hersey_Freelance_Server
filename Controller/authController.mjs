@@ -343,9 +343,7 @@ export const reviewGig = catchAsync(async (req, res, next) => {
         description: data.reviewData.description
     })
     res.status(200).json({
-        data: {
-            newReview
-        }
+        status: "Success"
     })
 })
 
@@ -362,9 +360,7 @@ export const reviewVendor = catchAsync(async (req, res, next) => {
     })
 
     res.status(200).json({
-        data: {
-            newReview
-        }
+        status: "Success"
     })
 })
 
