@@ -101,7 +101,7 @@ export const OTP = catchAsync(async (req, res, next) => {
 
     } else {
         res.status(401).json({
-            status: 'failed'
+            message: 'User with this email already exists!!!'
         });
     }
 })
@@ -180,7 +180,7 @@ export const vendorOTP = catchAsync(async (req, res) => {
 
     } else {
         res.status(401).json({
-            status: 'failed'
+            message: 'User with this email already exists!!!'
         });
     }
 })

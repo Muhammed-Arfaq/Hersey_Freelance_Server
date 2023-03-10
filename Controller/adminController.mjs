@@ -4,7 +4,7 @@ import Vendor from "../Model/vendorModel.mjs";
 import catchAsync from "../utils/catchAsync.mjs";
 
 export const getAllUsers = catchAsync(async( req, res, next ) => {
-    const users = await User.find()
+    const users = await User.find().sort({date: -1})
     res.status(200).json({
         status: 'success',
         data: {
@@ -28,7 +28,7 @@ export const unBlockUser = catchAsync(async(req, res, next ) => {
 })
 
 export const getAllVendors = catchAsync(async(req, res, next ) => {
-    const vendors = await Vendor.find()
+    const vendors = await Vendor.find().sort({date: -1})
     res.status(200).json({
         status: 'success',
         data: {
@@ -62,7 +62,7 @@ export const getVendorDetails = catchAsync(async(req, res, next ) => {
 })
 
 export const getAllCategory = catchAsync( async(req, res, next) => {
-    const categories = await Category.find()
+    const categories = await Category.find().sort({date: -1})
     res.status(200).json({
         status: 'success',
         data: {
