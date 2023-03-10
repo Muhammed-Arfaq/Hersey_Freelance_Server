@@ -202,9 +202,10 @@ export const fetchOrders = catchAsync(async (req, res, next) => {
 })
 
 export const completedOrder = catchAsync(async (req, res, next) => {
+    const vendorId = req.vendor._id
     const completedOrders = await Booking.aggregate([
         {
-            $match: { status: "Completed" }
+            $match: { vendorId: vendorId, status: "Completed" }
         },
         {
             $group: {
