@@ -8,15 +8,23 @@ dotenv.config({path: './config.env'})
 
 const db = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
 
-mongoose.connect(db, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+const connectDB = async () => {
+    await mongoose.connect(db, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+}
 
 mongoose.connection
-.once("open",()=>console.log("database connected successfully"))
-.on("error",error => {
-    console.log("error: ",error);
+    .once("open", () => console.log("database connected successfully"))
+    .on("error", error => {
+        console.log("error: ", error);
+})
+
+connectDB().then(() => {
+    app.listen(3500, () => {
+        console.log('server started')
+    })
 })
 
 // const server = http.createServer(app)
@@ -50,6 +58,6 @@ mongoose.connection
   
 //   })
 
-app.listen(3500, () => {
-    console.log('server started')
-})
+// app.listen(3500, () => {
+//     console.log('server started')
+// })
