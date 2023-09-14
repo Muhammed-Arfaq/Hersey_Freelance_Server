@@ -8,8 +8,8 @@ dotenv.config({path: './config.env'})
 
 const db = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
 
-const connectDB = () => {
-    mongoose.connect(db, {
+const connectDB = async () => {
+    await mongoose.connect(db, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -22,7 +22,7 @@ mongoose.connection
 })
 
 connectDB().then(() => {
-    app.listen(3500, () => {
+    app.listen(3000, () => {
         console.log('server started')
     })
 })
