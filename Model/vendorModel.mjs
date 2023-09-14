@@ -97,7 +97,6 @@ const vendorSchema = new mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date
-
 })
 
 vendorSchema.pre('save', async function(next){
