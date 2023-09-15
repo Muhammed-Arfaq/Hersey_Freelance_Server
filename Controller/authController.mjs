@@ -17,32 +17,32 @@ import vendorReview from '../Model/vendorReviewModel.mjs'
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
 
-let fullName
-let userName
-let email
-let phone
-let password
-let passwordConfirm
-let gender
-let dob
+// let fullName
+// let userName
+// let email
+// let phone
+// let password
+// let passwordConfirm
+// let gender
+// let dob
 
-let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    service: 'Gmail',
+// let transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 465,
+//     secure: true,
+//     service: 'Gmail',
 
-    auth: {
-        user: 'herseyfreelance1@gmail.com',
-        pass: 'vcpbeziakxovegve',
-    }
+//     auth: {
+//         user: 'herseyfreelance1@gmail.com',
+//         pass: 'vcpbeziakxovegve',
+//     }
 
-});
+// });
 
-let otp = Math.random();
-otp = otp * 1000000;
-otp = parseInt(otp);
-console.log(otp);
+// let otp = Math.random();
+// otp = otp * 1000000;
+// otp = parseInt(otp);
+// console.log(otp);
 
 // --------------------------------------------------------------------------------------------------------------
 
@@ -81,44 +81,44 @@ const createSendToken = (user, statusCode, res) => {
 //     next()
 // })
 
-export const OTP = catchAsync(async (req, res, next) => {
+// export const OTP = catchAsync(async (req, res, next) => {
 
-    fullName = req.body.fullName,
-        userName = req.body.userName,
-        email = req.body.email,
-        phone = req.body.phone,
-        password = req.body.password,
-        passwordConfirm = req.body.passwordConfirm;
+//     fullName = req.body.fullName,
+//         userName = req.body.userName,
+//         email = req.body.email,
+//         phone = req.body.phone,
+//         password = req.body.password,
+//         passwordConfirm = req.body.passwordConfirm;
 
-    const user = await User.findOne({ email: email })
+//     const user = await User.findOne({ email: email })
 
-    if (!user) {
+//     if (!user) {
 
-        // send mail with defined transport object
-        let mailOptions = {
-            to: req.body.email,
-            subject: "Otp for registration is: ",
-            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-        };
+//         // send mail with defined transport object
+//         let mailOptions = {
+//             to: req.body.email,
+//             subject: "Otp for registration is: ",
+//             html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+//         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log(error);
-            }
-            console.log('Message sent: %s', info.messageId);
-            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+//         transporter.sendMail(mailOptions, (error, info) => {
+//             if (error) {
+//                 return console.log(error);
+//             }
+//             console.log('Message sent: %s', info.messageId);
+//             console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 
-            res.status(200).json({
-                status: 'success'
-            });
-        });
+//             res.status(200).json({
+//                 status: 'success'
+//             });
+//         });
 
-    } else {
-        res.status(401).json({
-            message: 'User with this email already exists!!!'
-        });
-    }
-})
+//     } else {
+//         res.status(401).json({
+//             message: 'User with this email already exists!!!'
+//         });
+//     }
+// })
 
 // exports.resendOTP = catchAsync(async(req, res, next) => {
 //     var mailOptions={
@@ -138,87 +138,73 @@ export const OTP = catchAsync(async (req, res, next) => {
 // })
 
 export const verifyOTP = catchAsync(async (req, res, next) => {
-    if (req.body.otp == otp) {
         const newuser = await User.create({
-            fullName: fullName,
-            userName: userName,
-            email: email,
-            phone: phone,
-            password: password,
-            passwordConfirm: passwordConfirm
+            fullName: req.body?.fullName,
+            userName: req.body?.userName,
+            email: req.body?.email,
+            phone: req.body?.phone,
+            password: req.body?.password,
+            passwordConfirm: req.body?.passwordConfirm
         });
 
         createSendToken(newuser, 201, res);
         next()
-    }
-    else {
-        res.status(401).json({
-            status: 'failed'
-        });
-    }
 })
 
-export const vendorOTP = catchAsync(async (req, res) => {
+// export const vendorOTP = catchAsync(async (req, res) => {
 
-    fullName = req.body.fullName,
-        userName = req.body.userName,
-        email = req.body.email,
-        phone = req.body.phone,
-        gender = req.body.gender,
-        dob = req.body.dob,
-        password = req.body.password,
-        passwordConfirm = req.body.passwordConfirm;
+//     fullName = req.body.fullName,
+//         userName = req.body.userName,
+//         email = req.body.email,
+//         phone = req.body.phone,
+//         gender = req.body.gender,
+//         dob = req.body.dob,
+//         password = req.body.password,
+//         passwordConfirm = req.body.passwordConfirm;
 
-    const vendor = await Vendor.findOne({ email: email })
+//     const vendor = await Vendor.findOne({ email: email })
 
-    if (!vendor) {
+//     if (!vendor) {
 
-        // send mail with defined transport object
-        let mailOptions = {
-            to: req.body.email,
-            subject: "Otp for registration is: ",
-            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-        };
+//         // send mail with defined transport object
+//         let mailOptions = {
+//             to: req.body.email,
+//             subject: "Otp for registration is: ",
+//             html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+//         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log(error);
-            }
-            console.log('Message sent: %s', info.messageId);
-            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+//         transporter.sendMail(mailOptions, (error, info) => {
+//             if (error) {
+//                 return console.log(error);
+//             }
+//             console.log('Message sent: %s', info.messageId);
+//             console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 
-            res.status(200).json({
-                status: 'success'
-            });
-        });
+//             res.status(200).json({
+//                 status: 'success'
+//             });
+//         });
 
-    } else {
-        res.status(401).json({
-            message: 'User with this email already exists!!!'
-        });
-    }
-})
+//     } else {
+//         res.status(401).json({
+//             message: 'User with this email already exists!!!'
+//         });
+//     }
+// })
 
 export const verifyVendorOTP = catchAsync(async (req, res) => {
-    if (req.body.otp == otp) {
         const newVendor = await Vendor.create({
-            fullName: fullName,
-            userName: userName,
-            email: email,
-            phone: phone,
-            gender: gender,
-            dob: dob,
-            password: password,
-            passwordConfirm: passwordConfirm
+            fullName: req.body?.fullName,
+            userName: req.body?.userName,
+            email: req.body?.email,
+            phone: req.body?.phone,
+            gender: req.body?.gender,
+            dob: req.body?.dob,
+            password: req.body?.password,
+            passwordConfirm: req.body?.passwordConfirm
         });
 
         createSendToken(newVendor, 201, res);
-    }
-    else {
-        res.status(401).json({
-            status: 'failed'
-        });
-    }
 })
 
 export const login = catchAsync(async (req, res, next) => {

@@ -1,5 +1,5 @@
 import  express  from 'express'
-import { allMessageCountVendor, getConnections, vendorGig, vendorLogin, vendorOTP, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
+import { allMessageCountVendor, getConnections, vendorGig, vendorLogin, vendorProtect, verifyVendorOTP }  from '../Controller/authController.mjs'
 import { bookings, cancelUserOrder, completedOrder, completeUserOrder, deleteGig, fetchOrders, showAllCategory, updateVendorAddress, updateVendorGigs, updateVendorProfile, updateVendorSkills, vendorAuth, vendorDashboardCount, vendorProfile, vendorRatings, viewGigs } from '../Controller/vendorController.mjs'
 
 const router = express.Router()
@@ -8,9 +8,9 @@ router
     .route('/login')
     .post(vendorLogin)
 
-router
-    .route('/vendorOTP')
-    .post(vendorOTP)
+// router
+//     .route('/vendorOTP')
+//     .post(vendorOTP)
 
 router
     .route('/verifyVendorOTP')
