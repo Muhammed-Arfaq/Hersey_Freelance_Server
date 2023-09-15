@@ -22,7 +22,7 @@ mongoose.connection
 })
 
 connectDB().then(() => {
-    app.listen(3000, () => {
+    app.listen(3500, () => {
         console.log('server started')
     })
 })
