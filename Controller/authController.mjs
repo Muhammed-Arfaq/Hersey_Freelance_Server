@@ -193,6 +193,7 @@ export const verifyOTP = catchAsync(async (req, res, next) => {
 // })
 
 export const verifyVendorOTP = catchAsync(async (req, res) => {
+    
         const newVendor = await Vendor.create({
             fullName: req.body?.fullName,
             userName: req.body?.userName,
