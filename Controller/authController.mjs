@@ -12,7 +12,7 @@ import Message from '../Model/messageModel.mjs'
 import Review from '../Model/reviewModel.mjs'
 import fileUploader from '../Cloudinary/fileUploader.mjs'
 import vendorReview from '../Model/vendorReviewModel.mjs'
-// import Admin from '../Model/adminModel.mjs'
+import Admin from '../Model/adminModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
