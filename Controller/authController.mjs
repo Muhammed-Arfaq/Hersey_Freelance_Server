@@ -4,7 +4,6 @@ import catchAsync from '../utils/catchAsync.mjs'
 import AppError from '../utils/appError.mjs'
 import nodemailer from 'nodemailer'
 import User from '../Model/userModel.mjs'
-import Admin from '../Model/adminModel.mjs'
 import Vendor from '../Model/vendorModel.mjs'
 import Gig from '../Model/gigModel.mjs'
 import Category from '../Model/categoryModel.mjs'
@@ -13,6 +12,7 @@ import Message from '../Model/messageModel.mjs'
 import Review from '../Model/reviewModel.mjs'
 import fileUploader from '../Cloudinary/fileUploader.mjs'
 import vendorReview from '../Model/vendorReviewModel.mjs'
+// import Admin from '../Model/adminModel.mjs'
 
 // --------------------------------------------------------------------------------------------------------------
 // Email OTP Verify
@@ -68,13 +68,13 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 // export const adminSignup = catchAsync(async (req, res, next) => {
-//     const newAdmin: await Admin.create({
+//     const newAdmin = await Admin.create({
 //         fullName: req.body.fullName,
 //         userName: req.body.userName,
 //         email: req.body.email,
 //         phone: req.body.phone,
 //         password: req.body.password,
-//         passwordConfirm: req.body.passwordConfirm;
+//         passwordConfirm: req.body.passwordConfirm
 //     })
  
 //     createSendToken(newAdmin, 201, res);
@@ -193,7 +193,7 @@ export const verifyOTP = catchAsync(async (req, res, next) => {
 // })
 
 export const verifyVendorOTP = catchAsync(async (req, res) => {
-    
+
         const newVendor = await Vendor.create({
             fullName: req.body?.fullName,
             userName: req.body?.userName,
